@@ -80,14 +80,25 @@ class NewEvaluation extends Component {
         const formData = new FormData();
         formData.append('file', this.state.file);
         console.log("K VALUE " + e.target.elements.k.value);
-        if (e.target.elements.k.value === '')
-            formData.append('k', '0');
+
+        const params = JSON.stringify({
+            k: e.target.elements.k.value,
+        });
+
+        formData.append('params', params);
+
+        /*if (e.target.elements.k.value === '')
+            formData.append('params', {k: 0});
         else
-            formData.append('k', e.target.elements.k.value);
+            formData.append('params', {k: 0});*/
         formData.append('className', e.target.elements.className.value);
         formData.append('algorithm', this.state.selectedAlgorithm);
 
         console.log("SELECTED " + this.state.selectedAlgorithm);
+
+        for (var pair of formData.entries()) {
+            console.log(pair[0]+ ', ' + pair[1]);
+        }
 
         fetch('http://localhost:8080/api/ingest', {
             method: 'POST',
