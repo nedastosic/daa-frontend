@@ -29,6 +29,13 @@ class NewEvaluation extends Component {
         this.state = {
             file: '',
             k: '',
+            inputLayer: '',
+            outputLayer: '',
+            hiddenLayer: '',
+            numberOfHiddenLayers: '',
+            learningRate: '',
+            maxError: '',
+            maxIterations: '',
             className: '',
             toaster: false,
             eval: [], isLoading: true,
@@ -44,6 +51,13 @@ class NewEvaluation extends Component {
             showChart: false,
         };
         this.setK = this.setK.bind(this);
+        this.setInputLayer = this.setInputLayer.bind(this);
+        this.setOutputLayer = this.setOutputLayer.bind(this);
+        this.setHiddenLayer = this.setHiddenLayer.bind(this);
+        this.setNumberOfHiddenLayers = this.setNumberOfHiddenLayers.bind(this);
+        this.setLearningRate = this.setLearningRate.bind(this);
+        this.setMaxError = this.setMaxError.bind(this);
+        this.setMaxIterations = this.setMaxIterations.bind(this);
         this.setClassName = this.setK.bind(this);
     }
 
@@ -81,9 +95,24 @@ class NewEvaluation extends Component {
         formData.append('file', this.state.file);
         console.log("K VALUE " + e.target.elements.k.value);
 
-        const params = JSON.stringify({
-            k: e.target.elements.k.value,
-        });
+        let params;
+
+        if (this.state.selectedAlgorithm === 1) {
+            params = JSON.stringify({
+                k: e.target.elements.k.value,
+            });
+        } else if (this.state.selectedAlgorithm === 4){
+            params = JSON.stringify({
+                inputLayer : e.target.elements.inputLayer.value,
+                outputLayer : e.target.elements.outputLayer.value,
+                hiddenLayer : e.target.elements.hiddenLayer.value,
+                numberOfHiddenLayers : e.target.elements.numberOfHiddenLayers.value,
+                learningRate : e.target.elements.learningRate.value,
+                maxError : e.target.elements.maxError.value,
+                maxIterations : e.target.elements.maxIterations.value,
+            });
+        }
+
 
         formData.append('params', params);
 
@@ -134,6 +163,34 @@ class NewEvaluation extends Component {
         this.setState({k: event.target.value});
     }
 
+    setInputLayer(event) {
+        this.setState({inputLayer: event.target.value});
+    }
+
+    setOutputLayer(event) {
+        this.setState({outputLayer: event.target.value});
+    }
+
+    setHiddenLayer(event) {
+        this.setState({hiddenLayer: event.target.value});
+    }
+
+    setNumberOfHiddenLayers(event) {
+        this.setState({numberOfHiddenLayers: event.target.value});
+    }
+
+    setLearningRate(event) {
+        this.setState({learningRate: event.target.value});
+    }
+
+    setMaxError(event) {
+        this.setState({maxError: event.target.value});
+    }
+
+    setMaxIterations(event) {
+        this.setState({maxIterations: event.target.value});
+    }
+
     setClassName(event1) {
         this.setState({className: event1.target.value});
     }
@@ -156,6 +213,27 @@ class NewEvaluation extends Component {
 
                         <div>
                             <TextField id="standard-basic" label="K parameter" name="k"/>
+                        </div>
+                        <div>
+                            <TextField id="standard-basic" label="Input layer neurons" name="inputLayer"/>
+                        </div>
+                        <div>
+                            <TextField id="standard-basic" label="Output layer neurons" name="outputLayer"/>
+                        </div>
+                        <div>
+                            <TextField id="standard-basic" label="Hidden layer neurons" name="hiddenLayer"/>
+                        </div>
+                        <div>
+                            <TextField id="standard-basic" label="Number of hidden layers" name="numberOfHiddenLayers"/>
+                        </div>
+                        <div>
+                            <TextField id="standard-basic" label="Learning rate" name="learningRate"/>
+                        </div>
+                        <div>
+                            <TextField id="standard-basic" label="Maximum error" name="maxError"/>
+                        </div>
+                        <div>
+                            <TextField id="standard-basic" label="Maximum iterations" name="maxIterations"/>
                         </div>
                         <div>
                             <TextField id="standard-basic" label="Class name" name="className"/>
