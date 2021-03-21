@@ -38,7 +38,11 @@
 }
 
 .container, .container-fluid {
-  margin-top: 20px;
+   margin-top: 20px;
+ }
+
+.card {
+  margin-bottom: 15px;
 }
 
 
