@@ -1,5 +1,7 @@
 import React, {Component} from 'react';
-import {Button, Buttonalgorithm, ButtonGroup, Container, Table} from 'reactstrap';
+import {Button, Container, Table} from 'reactstrap';
+import {OverlayTrigger, Tooltip} from 'react-bootstrap';
+import { BsFillInfoCircleFill } from 'react-icons/bs';
 import AppNavbar from './AppNavbar';
 import axios from "axios";
 
@@ -25,11 +27,37 @@ class MyEvaluationList extends Component {
         });
     }
 
-    checkValue(evaluation){
-        if(typeof evaluation.parameters[0] != 'undefined'){
-            return evaluation.parameters[0].value;
+    checkValue(evaluation) {
+        let params = '';
+        for (const item of evaluation.parameters){
+            params += item.parameterCodelist.name + ' = ' + item.value + ';';
         }
-        return "/";
+
+        if (params === '') {
+            params = 'No parameters'
+        }
+
+        return (<OverlayTrigger overlay={<Tooltip id="tooltip-disabled">{params}</Tooltip>}>
+            <BsFillInfoCircleFill />
+        </OverlayTrigger>)
+    }
+
+    downloadDataset = (id, name) => {
+        fetch(`http://localhost:8080/api/datasets/${id}`, {
+            method: 'GET',
+            headers: new Headers({
+                'Authorization': `Bearer ${localStorage.getItem("authorization")}`,
+            }),
+        }).then(async response => {
+            const result =await response.blob();
+            console.log(result);
+            const file = new Blob([result], {type: 'text/csv'});
+            var url = URL.createObjectURL(file);
+            var tempLink = document.createElement('a');
+            tempLink.href = url;
+            tempLink.setAttribute('download', name);
+            tempLink.click();
+        });
     }
 
     async remove(id) {
@@ -59,14 +87,17 @@ class MyEvaluationList extends Component {
 
             return <tr key={evaluation.id}>
                 <td style={{whiteSpace: 'nowrap'}}>{evaluation.algorithm.name}</td>
-                <td style={{whiteSpace: 'nowrap'}}>{evaluation.accuracy}</td>
-                <td style={{whiteSpace: 'nowrap'}}>{evaluation.precision}</td>
-                <td style={{whiteSpace: 'nowrap'}}>{evaluation.recall}</td>
-                <td style={{whiteSpace: 'nowrap'}}>{evaluation.f1}</td>
-                <td style={{whiteSpace: 'nowrap'}}>{evaluation.dataset.name}</td>
+                <td style={{whiteSpace: 'nowrap'}}>{(new Date(evaluation.timestamp)).getDate()}/{(new Date(evaluation.timestamp)).getMonth() + 1}/{(new Date(evaluation.timestamp)).getFullYear()} {(new Date(evaluation.timestamp)).toTimeString().split(' ')[0]}</td>
+                <td style={{whiteSpace: 'nowrap'}}>{((evaluation.accuracy) * 100).toFixed(4)} %</td>
+                <td style={{whiteSpace: 'nowrap'}}>{((evaluation.precision) * 100).toFixed(4)} %</td>
+                <td style={{whiteSpace: 'nowrap'}}>{((evaluation.recall) * 100).toFixed(4)} %</td>
+                <td style={{whiteSpace: 'nowrap'}}>{((evaluation.f1) * 100).toFixed(4)} %</td>
+                <td><button className="btn btn-link" onClick={(e) => this.downloadDataset(evaluation.dataset.id, evaluation.dataset.name)}>{evaluation.dataset.name}</button></td>
                 <td style={{whiteSpace: 'nowrap'}}>{this.checkValue(evaluation)}</td>
 
-                <Button size="sm" color="danger" onClick={(e) => { if (window.confirm('Are you sure you want to delete this item?')) this.remove(evaluation.id) } }>
+                <Button size="sm" color="danger" onClick={(e) => {
+                    if (window.confirm('Are you sure you want to delete this item?')) this.remove(evaluation.id)
+                }}>
                     Delete
                 </Button>
 
@@ -82,12 +113,14 @@ class MyEvaluationList extends Component {
                         <thead>
                         <tr>
                             <th width="20%">Algorithm</th>
+                            <th>Date</th>
                             <th>Accuracy</th>
                             <th>Precision</th>
                             <th>Recall</th>
                             <th>F1</th>
                             <th>Dataset name</th>
                             <th>Parameter</th>
+                            <th></th>
                         </tr>
                         </thead>
                         <tbody>

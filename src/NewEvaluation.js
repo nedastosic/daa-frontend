@@ -52,6 +52,7 @@ class NewEvaluation extends Component {
             falsePositives: '',
             falseNegatives: '',
             trueNegatives: '',
+            histogramData: '',
             showChart: false,
             showResults: false,
         };
@@ -141,11 +142,7 @@ class NewEvaluation extends Component {
                 this.setState({'trueNegatives': response.trueNegatives});
                 this.setState({'showCharts': true});
                 this.setState({'showResults': true});
-
-                console.log(this.state.truePositives);
-                console.log(this.state.falsePositives);
-                console.log(this.state.falseNegatives);
-                console.log(this.state.trueNegatives);
+                this.setState({'histogramData': JSON.parse(response.histogramData)});
             } else {
                 this.state.status = 'FAILED';
             }
@@ -155,7 +152,7 @@ class NewEvaluation extends Component {
 
     setFile(e) {
         this.setState({file: e.target.files[0]});
-        this.setState({fileName:e.target.files[0].name});
+        this.setState({fileName: e.target.files[0].name});
     }
 
     handleInputChange(event) {
@@ -286,7 +283,8 @@ class NewEvaluation extends Component {
                         </tr>
                         </thead>
                         <tbody>
-                        <tr><th>Actual positive</th>
+                        <tr>
+                            <th>Actual positive</th>
                             <td>{this.state.truePositives}</td>
                             <td>{this.state.falseNegatives}</td>
                         </tr>
@@ -297,7 +295,6 @@ class NewEvaluation extends Component {
                         </tr>
                         </tbody>
                     </Table>
-
 
 
                     <div style={{float: "left"}}>
@@ -336,6 +333,56 @@ class NewEvaluation extends Component {
                             }}
                         />
                     </div>
+
+
+                </Card.Body>
+            </Card>);
+        } else {
+            return (<div></div>);
+        }
+    }
+
+    generateHistograms() {
+        if (Object.keys(this.state.histogramData).length > 0) {
+
+            const result = [];
+            for (const key of Object.keys(this.state.histogramData)) {
+                const chartData = [];
+                chartData.push(['value', 'count']);
+                for (const value of Object.keys(this.state.histogramData[key])) {
+                    const count = this.state.histogramData[key][value];
+                    chartData.push([parseFloat(value), count]);
+                }
+                result.push([key, chartData]);
+            }
+
+            const histogramsList = result.map(chartData => {
+                return (
+                    <div style={{float: "left"}}>
+                        <Chart
+                            width={'200px'}
+                            height={'200px'}
+                            chartType="ColumnChart"
+                            display='block'
+                            loader={<div>Loading Chart</div>}
+                            data={chartData[1]}
+                            options={{
+                                title: chartData[0],
+                                bar: {groupWidth: '100%'},
+                                legend: {position: 'none'},
+                                titleTextStyle: {
+                                    fontSize: 15
+                                }
+                            }}
+                        />
+                    </div>)
+            });
+
+
+            return (<Card>
+                <Card.Header>Data distribution histograms</Card.Header>
+                <Card.Body>
+                    {histogramsList}
                 </Card.Body>
             </Card>);
         } else {
@@ -375,8 +422,8 @@ class NewEvaluation extends Component {
                         </Card>
                         {this.generateForm()}
                     </Form>
+                    {this.generateHistograms()}
                     {this.generateResults()}
-
 
                 </Container>
             </div>

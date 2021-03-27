@@ -33,8 +33,25 @@ class DownloadDatasetsList extends Component {
         return "/";
     }
 
-    downloadDataset = (id) => {
-        console.log("id " + id)
+    downloadDataset = (id, name) => {
+        fetch(`http://localhost:8080/api/datasets/${id}`, {
+            method: 'GET',
+            headers: new Headers({
+                'Authorization': `Bearer ${localStorage.getItem("authorization")}`,
+            }),
+        }).then(async response => {
+            const result =await response.blob();
+            console.log(result);
+            const file = new Blob([result], {type: 'text/csv'});
+            var url = URL.createObjectURL(file);
+            var tempLink = document.createElement('a');
+            tempLink.href = url;
+            tempLink.setAttribute('download', name);
+            tempLink.click();
+        });
+    }
+
+    previewDataset = (id) => {
         fetch(`http://localhost:8080/api/datasets/${id}`, {
             method: 'GET',
             headers: new Headers({
@@ -44,24 +61,9 @@ class DownloadDatasetsList extends Component {
             const result =await response.blob();
             console.log(result);
             const file = new Blob([result], {type: 'text/plain'});
-            // element.href = URL.createObjectURL(file);
-            // element.download = "myFile.txt";
-            // var blob = new Blob([result], { type: 'csv' });
             var url = URL.createObjectURL(file);
             window.open(url);
-            /*console.log(response.body);
-            const filename =  response.headers.get('Content-Disposition').split('filename=')[1];
-            response.blob().then(blob => {
-                let url = window.URL.createObjectURL(blob);
-                let a = document.createElement('a');
-                a.href = url;
-                a.download = filename;
-                a.click();
-            console.log(response.body);
-            });*/
         });
-
-
     }
 
     render() {
@@ -76,20 +78,22 @@ class DownloadDatasetsList extends Component {
 
             return <tr key={dataset.id}>
                 <td style={{whiteSpace: 'nowrap'}}>{dataset.name}</td>
-                <td><button className="btn btn-primary" onClick={(e) => this.downloadDataset(dataset.id)}>Preview</button></td>
+                <td>{dataset.user.username}</td>
+                <td><button className="btn btn-info" onClick={(e) => this.previewDataset(dataset.id)}>Preview</button> <button className="btn btn-primary" onClick={(e) => this.downloadDataset(dataset.id, dataset.name)}>Download</button></td>
             </tr>
         });
 
         return (
             <div>
                 <AppNavbar/>
-                <Container fluid>
+                <Container maxWidth="md">
                     <h3>Datasets</h3>
                     <Table className="mt-4">
                         <thead>
                         <tr>
                             <th width="20%">Name</th>
-                            <th>Preview</th>
+                            <th>Username</th>
+                            <th>Action</th>
                         </tr>
                         </thead>
                         <tbody>
