@@ -53,6 +53,7 @@ class NewEvaluation extends Component {
             falseNegatives: '',
             trueNegatives: '',
             histogramData: '',
+            pcaData: [],
             showChart: false,
             showResults: false,
         };
@@ -129,7 +130,7 @@ class NewEvaluation extends Component {
             if (res.status === 200) {
                 this.state.status = 'COMPLETED';
                 console.log("COMPLETED");
-
+                console.log(JSON.parse(response.pcaResult));
                 this.setState({'accuracy': response.evaluation.accuracy});
                 this.setState({'precision': response.evaluation.precision});
                 this.setState({'recall': response.evaluation.recall});
@@ -143,6 +144,9 @@ class NewEvaluation extends Component {
                 this.setState({'showCharts': true});
                 this.setState({'showResults': true});
                 this.setState({'histogramData': JSON.parse(response.histogramData)});
+                this.setState({'pcaData': [['X', 'Y']].concat(JSON.parse(response.pcaResult))});
+
+                console.log(this.state.pcaData);
             } else {
                 this.state.status = 'FAILED';
             }
@@ -314,27 +318,6 @@ class NewEvaluation extends Component {
                         />
                     </div>
 
-                    <div style={{float: "left"}}>
-                        <Chart
-                            width={'500px'}
-                            height={'300px'}
-                            chartType="Bar"
-                            display='block'
-                            loader={<div>Loading Chart</div>}
-                            data={[
-                                ['Parameter', 'Value'],
-                                ['Accuracy', this.state.accuracy],
-                                ['Precision', this.state.precision],
-                                ['Recall', this.state.recall],
-                                ['F1', this.state.f1],
-                            ]}
-                            options={{
-                                title: '',
-                            }}
-                        />
-                    </div>
-
-
                 </Card.Body>
             </Card>);
         } else {
@@ -390,6 +373,34 @@ class NewEvaluation extends Component {
         }
     }
 
+    generatePcaChart() {
+        if (this.state.showResults) {
+            return (
+                <Card>
+                    <Card.Header>Principal components analysys</Card.Header>
+                    <Card.Body>
+                        <Chart
+                            width={'600px'}
+                            height={'400px'}
+                            chartType="ScatterChart"
+                            loader={<div>Loading Chart</div>}
+                            data={
+                                this.state.pcaData
+                            }
+                            options={{
+                                hAxis: {title: 'X'},
+                                vAxis: {title: 'Y'},
+                                legend: 'none',
+                            }}
+                            rootProps={{'data-testid': '1'}}
+                        />
+                    </Card.Body>
+                </Card>);
+        } else {
+            return (<div></div>);
+        }
+    }
+
 
     render() {
 
@@ -399,7 +410,7 @@ class NewEvaluation extends Component {
                 <Container maxWidth="md">
                     <Form onSubmit={this.handleSubmit}>
                         <Card>
-                            <Card.Header>Step 1: Choose dataset and algorihm</Card.Header>
+                            <Card.Header>Step 1: Choose dataset and algorithm</Card.Header>
                             <Card.Body>
                                 <Form.Group>
                                     <Form.Label>Choose your dataset</Form.Label>
@@ -423,7 +434,9 @@ class NewEvaluation extends Component {
                         {this.generateForm()}
                     </Form>
                     {this.generateHistograms()}
+                    {this.generatePcaChart()}
                     {this.generateResults()}
+
 
                 </Container>
             </div>

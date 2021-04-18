@@ -1,11 +1,15 @@
-import React, { Component } from "react";
+import React, {Component} from "react";
+import {Container} from 'reactstrap';
+import Card from 'react-bootstrap/Card';
+import Form from "react-bootstrap/Form";
+import Button from "react-bootstrap/Button";
 import axios from 'axios';
 
 class login extends Component {
     constructor(props) {
         super(props);
         // this.handleFormSubmit = this.handleFormSubmit.bind(this);
-        this.state = {username:'', password:''};
+        this.state = {username: '', password: ''};
 
 
         this.handleChange = this.handleChange.bind(this);
@@ -25,14 +29,14 @@ class login extends Component {
             console.log(res);
             localStorage.setItem("authorization", res.data.token);
             return this.handleDashboard();
-        }).catch(e=>{
+        }).catch(e => {
             console.log(e.message);
         });
     };
 
     handleChange(evt) {
         const value = evt.target.value;
-        this.setState({ [evt.target.name]: value});
+        this.setState({[evt.target.name]: value});
     }
 
     handleDashboard() {
@@ -42,7 +46,7 @@ class login extends Component {
 
     render() {
         return (
-            <div>
+            /*<div>
                 <div class="wrapper">
                     <form class="form-signin" onSubmit={this.handleFormSubmit}>
                         <h2 class="form-signin-heading">Please login</h2>
@@ -69,8 +73,44 @@ class login extends Component {
                         </button>
                     </form>
                 </div>
-            </div>
+            </div>*/
+
+            <Container className="Login">
+                <Card>
+                    <Card.Header>Please login</Card.Header>
+                    <Card.Body>
+                        <form className="form-signin" onSubmit={this.handleFormSubmit}>
+                            <div className="form-group">
+                                <input type="text"
+                                       name="username"
+                                       className="form-control"
+                                       placeholder="Username"
+                                       value={this.state.username}
+                                       onChange={this.handleChange}
+                                />
+                            </div>
+                            <div className="form-group">
+                                <input type="password"
+                                       name="password"
+                                       className="form-control"
+                                       placeholder="Password"
+                                       value={this.state.password}
+                                       onChange={this.handleChange}
+                                />
+                            </div>
+                            <button className="btn btn-lg btn-primary btn-block" type="submit">
+                                Login
+                            </button>
+                        </form>
+                    </Card.Body>
+                </Card>
+            </Container>
+
+
+
+
         );
     }
 }
+
 export default login;
