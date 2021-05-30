@@ -46,40 +46,11 @@ class login extends Component {
 
     render() {
         return (
-            /*<div>
-                <div class="wrapper">
-                    <form class="form-signin" onSubmit={this.handleFormSubmit}>
-                        <h2 class="form-signin-heading">Please login</h2>
-                        <div className="form-group">
-                            <input type="text"
-                                   name="username"
-                                   class="form-control"
-                                   placeholder="User name"
-                                   value={this.state.username}
-                                   onChange={ this.handleChange }
-                            />
-                        </div>
-                        <div className="form-group">
-                            <input type="password"
-                                   name="password"
-                                   class="form-control"
-                                   placeholder="password"
-                                   value={this.state.password}
-                                   onChange={ this.handleChange }
-                            />
-                        </div>
-                        <button class="btn btn-lg btn-primary btn-block" type="submit">
-                            Login
-                        </button>
-                    </form>
-                </div>
-            </div>*/
 
             <Container className="Login">
-                <Card>
-                    <Card.Header>Please login</Card.Header>
-                    <Card.Body>
+
                         <form className="form-signin" onSubmit={this.handleFormSubmit}>
+                            <h4>Please login</h4>
                             <div className="form-group">
                                 <input type="text"
                                        name="username"
@@ -102,8 +73,6 @@ class login extends Component {
                                 Login
                             </button>
                         </form>
-                    </Card.Body>
-                </Card>
             </Container>
 
 

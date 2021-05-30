@@ -241,6 +241,13 @@ class NewEvaluation extends Component {
                                 <Form.Control type="number" name="maxIterations" value={this.state.maxIterations}
                                               onChange={this.handleInputChange} placeholder="Enter value"/>
                             </Form.Group>
+                            <Form.Group>
+                                <Form.Label>Class name</Form.Label>
+                                <Form.Control type="text" name="className" value={this.state.className}
+                                              onChange={this.handleInputChange} placeholder="Enter class name"/>
+                                <Form.Text className="text-muted">
+                                </Form.Text>
+                            </Form.Group>
                             <Button variant="primary" type="submit">Evaluate</Button>
                         </Card.Body>
                     </Card>
