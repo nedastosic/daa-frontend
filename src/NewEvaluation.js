@@ -8,6 +8,7 @@ import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
 import Card from 'react-bootstrap/Card';
 import Table from 'react-bootstrap/Table';
+import Popup from "react-popup";
 
 const customStyles = {
     option: (provided, state) => ({
@@ -86,7 +87,6 @@ class NewEvaluation extends Component {
 
 
     submit(e) {
-        console.log("cao");
         e.preventDefault();
         const formData = new FormData();
         formData.append('file', this.state.file);
@@ -129,7 +129,9 @@ class NewEvaluation extends Component {
             const response = await res.json();
             if (res.status === 200) {
                 this.state.status = 'COMPLETED';
-                console.log("COMPLETED");
+                console.log(response.evaluation);
+                console.log(response.evaluation === null);
+                if (response.evaluation){
                 console.log(JSON.parse(response.pcaResult));
                 this.setState({'accuracy': response.evaluation.accuracy});
                 this.setState({'precision': response.evaluation.precision});
@@ -145,12 +147,17 @@ class NewEvaluation extends Component {
                 this.setState({'showResults': true});
                 this.setState({'histogramData': JSON.parse(response.histogramData)});
                 this.setState({'pcaData': [['X', 'Y']].concat(JSON.parse(response.pcaResult))});
+                }else{
+                    Popup.alert('An error occurred while performing and saving evaluation');
 
+                }
                 console.log(this.state.pcaData);
             } else {
                 this.state.status = 'FAILED';
             }
 
+        }).catch((error) => {
+            Popup.alert('Invalid username or/and password!');
         });
     }
 
@@ -384,7 +391,7 @@ class NewEvaluation extends Component {
         if (this.state.showResults) {
             return (
                 <Card>
-                    <Card.Header>Principal components analysys</Card.Header>
+                    <Card.Header>Principal components analysis</Card.Header>
                     <Card.Body>
                         <Chart
                             width={'600px'}
@@ -415,6 +422,7 @@ class NewEvaluation extends Component {
             <div>
                 <AppNavbar/>
                 <Container maxWidth="md">
+                    <Popup />
                     <Form onSubmit={this.handleSubmit}>
                         <Card>
                             <Card.Header>Step 1: Choose dataset and algorithm</Card.Header>

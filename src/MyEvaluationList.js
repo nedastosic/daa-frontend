@@ -3,6 +3,7 @@ import {Button, Container, Table} from 'reactstrap';
 import {OverlayTrigger, Tooltip} from 'react-bootstrap';
 import { BsFillInfoCircleFill } from 'react-icons/bs';
 import AppNavbar from './AppNavbar';
+import Popup from 'react-popup';
 import axios from "axios";
 
 class MyEvaluationList extends Component {
@@ -24,6 +25,8 @@ class MyEvaluationList extends Component {
             } else {
                 alert("Authentication failure");
             }
+        }).catch((error) => {
+            Popup.alert('No evaluations found for user');
         });
     }
 
@@ -71,6 +74,8 @@ class MyEvaluationList extends Component {
         }).then(() => {
             let updatedEvaluations = [...this.state.evaluations].filter(i => i.id !== id);
             this.setState({evaluations: updatedEvaluations});
+        }).catch((error) => {
+            Popup.alert('An error occurred while deleting evaluation');
         });
     }
 
@@ -108,6 +113,7 @@ class MyEvaluationList extends Component {
             <div>
                 <AppNavbar/>
                 <Container fluid>
+                    <Popup />
                     <h3>My Evaluations</h3>
                     <Table className="mt-4">
                         <thead>

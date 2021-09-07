@@ -1,8 +1,6 @@
 import React, {Component} from "react";
 import {Container} from 'reactstrap';
-import Card from 'react-bootstrap/Card';
-import Form from "react-bootstrap/Form";
-import Button from "react-bootstrap/Button";
+import Popup from 'react-popup';
 import axios from 'axios';
 
 class login extends Component {
@@ -28,8 +26,11 @@ class login extends Component {
 
             console.log(res);
             localStorage.setItem("authorization", res.data.token);
+            Popup.alert('Login successfull');
+
             return this.handleDashboard();
         }).catch(e => {
+            Popup.alert('An error occurred while previewing dataset');
             console.log(e.message);
         });
     };
@@ -47,8 +48,8 @@ class login extends Component {
     render() {
         return (
 
-            <Container className="Login">
-
+            <Container className="Login" id="container">
+                <Popup />
                         <form className="form-signin" onSubmit={this.handleFormSubmit}>
                             <h4>Please login</h4>
                             <div className="form-group">

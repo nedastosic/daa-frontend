@@ -3,6 +3,7 @@ import {Button, Buttonalgorithm, ButtonGroup, Container, Table} from 'reactstrap
 import AppNavbar from './AppNavbar';
 import axios from "axios";
 import {  CSVDownload } from "react-csv";
+import Popup from "react-popup";
 
 class DownloadDatasetsList extends Component {
 
@@ -23,6 +24,8 @@ class DownloadDatasetsList extends Component {
             } else {
                 alert("Authentication failure");
             }
+        }).catch((error) => {
+            Popup.alert('No datasets found');
         });
     }
 
@@ -48,6 +51,8 @@ class DownloadDatasetsList extends Component {
             tempLink.href = url;
             tempLink.setAttribute('download', name);
             tempLink.click();
+        }).catch((error) => {
+            Popup.alert('An error occurred while downloading dataset');
         });
     }
 
@@ -63,6 +68,8 @@ class DownloadDatasetsList extends Component {
             const file = new Blob([result], {type: 'text/plain'});
             var url = URL.createObjectURL(file);
             window.open(url);
+        }).catch((error) => {
+            Popup.alert('An error occurred while previewing dataset');
         });
     }
 
@@ -87,6 +94,7 @@ class DownloadDatasetsList extends Component {
             <div>
                 <AppNavbar/>
                 <Container maxWidth="md">
+                    <Popup />
                     <h3>Datasets</h3>
                     <Table className="mt-4">
                         <thead>
